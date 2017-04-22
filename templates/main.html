@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Main page{% endblock %}
+
+{% block content %}
+
+  {% if error %}
+    <p style="color: red;">Login or password incorrect.</p>
+  {% endif %}
+
+  {% if dw %}
+    <p>{{ dw }}</p>
+  {% endif %}
+  <form action='.' method='post'>
+    <label for="username">Логин:</label>
+    <input type="text" name="username" value="" id="username">
+    <label for="password">Пароль:</label>
+    <input type="password" name="password" value="" id="password">
+
+    <input type="submit" value="login" />
+  </form>
+
+{% endblock %}
