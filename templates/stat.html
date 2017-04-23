@@ -6,5 +6,7 @@
     <p>Authorization.</p>
 
     <p>User name: {{ user }}</p>
-    <p>User name: {{ password }}</p>
+    <p>Password: {{ password }}</p>
+
+    {{ dw_info | safe}}
 {% endblock %}
