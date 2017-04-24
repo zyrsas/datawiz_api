@@ -22,4 +22,5 @@ urlpatterns = [
     url(r'^$', views.login),
     url(r'^stat/$', views.stat),
     url(r'^getproduct/$', views.get_product),
+    url(r'^salestat/$', views.sale_stat)
 ]

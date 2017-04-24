@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}Main indices{% endblock %}
+
+{% block content %}
+    <style>
+        table {
+            width: 100%; /* Ширина таблицы в процентах */
+            border-collapse: collapse;
+        }
+    </style>
+    {{ sale_stat | safe }}
+{% endblock %}
