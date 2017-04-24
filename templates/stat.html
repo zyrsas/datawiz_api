@@ -34,22 +34,20 @@
 
     <br>
     <div>
-         <form action='.' method='post'>
-            <label for="id_shops">ID_Shops:</label>
-            <input type="text" name="id_shops" value="" id="id_shops">
-            <label for="password">Пароль:</label>
-            <input type="password" name="password" value="" id="password">
+        <p>Інформація про товар: назву товару, штрих-код, код категорії, одиниці вимірювання. </p>
+         <form action="/getproduct/" method='post'>
+            <label for="id_products">ID Products:</label>
+            <input type="text" name="id_products" value="2837229" id="id_products">
             <input type="submit" value="Ok" />
          </form>
     </div>
     <br>
 
     <div>
-
-    {{ dw_sales | safe }}
+    
     </div>
 
     {{ product | safe}}
     <br>
-    {{ id2name }}
+    {{ id2name | safe}}
 {% endblock %}

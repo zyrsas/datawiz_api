@@ -23,3 +23,4 @@ def client_shops(dw):
     dw_shops = pd.DataFrame(dw_shops)
     return dw_shops.to_html()
 
+

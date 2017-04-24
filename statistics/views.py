@@ -46,17 +46,51 @@ def stat(request):
         username = request.session['username']
         password = request.session['password']
 
-        turnover = pd.DataFrame(dw.get_products_sale(shops=int(595), by='turnover', date_from="2015-11-17",
-                                        date_to="2015-11-18", view_type="represent"))
+        turnover = pd.DataFrame(dw.get_products_sale(by='turnover', date_from="2015-11-17",
+                                        date_to="2015-11-18"))
+
+        turn_over = []
+        for turn_val in turnover.values:
+            turn_over.append(turn_val.sum())
+
+        #qty
+        """qty = pd.DataFrame(dw.get_products_sale(by='qty', date_from="2015-11-17",
+                                        date_to="2015-11-18"))
+
+        qty_list = []
+        for qty_val in qty.values:
+            qty_list.append(qty_val.sum())"""
+
+        receipts_qty = pd.DataFrame(dw.get_products_sale(by='receipts_qty', date_from="2015-11-17",
+                                        date_to="2015-11-18"))
+
+        receipt_qty_list = []
+        for rc_qty_val in receipts_qty.values:
+            receipt_qty_list.append(rc_qty_val.sum())
+
+
+        average_qty = []
+        for turn_val, rc_qty_val in turn_over, receipt_qty_list:
+            average_qty.append(turn_val / rc_qty_val)
+
 
         context = {'user': username,
                    'password': password,
                    'dw_info': client_info(dw),
-                   'dw_sales': categories_sales(dw),
+                   #'dw_sales': categories_sales(dw),
                    'dw_shops': client_shops(dw),
-                   'product': turnover.to_html(),
-                   'id2name': dw.id2name([2837457, 2837488])
+                   'product': average_qty,
                   }
         return render_to_response("stat.html", context)
     except KeyError:
         return render_to_response("permission.html")
+
+
+@csrf_exempt
+def get_product(request):
+    if request.POST:
+        index = request.POST['id_products']
+        prd = dw.get_product(products=int(index))
+        prd = pd.DataFrame(prd, index=[0])
+
+    return render_to_response("get_product.html", {'products': prd.to_html()})
