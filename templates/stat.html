@@ -1,22 +1,55 @@
 {% extends "base.html" %}
 
-{% block title %}The Sparta!{% endblock %}
+{% block title %}The Sparta!
+
+{% endblock %}
 
 {% block content %}
     <p>Authorization.</p>
-    <div style="alignment: right;">
+    <div>
         <form action="" method="POST">
             <input type="submit" value="logout" />
         </form>
     </div>
-
+    <style>
+        table {
+            width: 100%; /* Ширина таблицы в процентах */
+            border-collapse: collapse;
+        }
+    </style>
 
     <p>User name: {{ user }}</p>
     <p>Password: {{ password }}</p>
+    <div>
+        <p>Таблиця показує ім'я клієнта, назви магазинів його мережі, дату реєстрації першого та останнього чеків клієнта в мережі.</p>
+        {{ dw_info | safe}}
+    </div>
 
-    {{ dw_info | safe}}
     <br>
+    <div>
+        <p>Таблиця про інформацію по магазину: назву магазину, його адресу, розташування на карті та координати.</p>
+        {{ dw_shops | safe }}
+    </div>
+    <br>
+
+    <br>
+    <div>
+         <form action='.' method='post'>
+            <label for="id_shops">ID_Shops:</label>
+            <input type="text" name="id_shops" value="" id="id_shops">
+            <label for="password">Пароль:</label>
+            <input type="password" name="password" value="" id="password">
+            <input type="submit" value="Ok" />
+         </form>
+    </div>
+    <br>
+
+    <div>
+
     {{ dw_sales | safe }}
+    </div>
+
+    {{ product | safe}}
     <br>
-    {{ dw_shops | safe }}
+    {{ id2name }}
 {% endblock %}

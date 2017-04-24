@@ -3,6 +3,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponseRedirect
 from dwapi import datawiz, datawiz_auth
 import datetime
+import pandas as pd
 from dw_func import client_info, categories_sales, client_shops
 
 
@@ -45,21 +46,17 @@ def stat(request):
         username = request.session['username']
         password = request.session['password']
 
-
-        """df = dw.get_products_sale(products=[2833024, 2286946, 'sum'], by='turnover',
-                              shops=[305, 306, 318, 321],
-                              date_from = datetime.date(2015, 11, 17),
-                              date_to = datetime.date(2015, 12, 17),
-                              interval = datawiz.WEEKS)"""
+        turnover = pd.DataFrame(dw.get_products_sale(shops=int(595), by='turnover', date_from="2015-11-17",
+                                        date_to="2015-11-18", view_type="represent"))
 
         context = {'user': username,
                    'password': password,
                    'dw_info': client_info(dw),
                    'dw_sales': categories_sales(dw),
                    'dw_shops': client_shops(dw),
-                   #'dw_shops': dw_porduct,
+                   'product': turnover.to_html(),
+                   'id2name': dw.id2name([2837457, 2837488])
                   }
-
         return render_to_response("stat.html", context)
     except KeyError:
         return render_to_response("permission.html")

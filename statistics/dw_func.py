@@ -13,7 +13,7 @@ def client_info(dw):
 
 
 def categories_sales(dw):
-    dw_sales = dw.get_categories_sale(date_from=date_from, date_to=date_to)
+    dw_sales = dw.get_categories_sale(categories=['sum'], shops=int(601), by='turnover')
     dw_sales = pd.DataFrame(dw_sales)
     return dw_sales.to_html()
 
@@ -22,3 +22,4 @@ def client_shops(dw):
     dw_shops = dw.get_shops()
     dw_shops = pd.DataFrame(dw_shops)
     return dw_shops.to_html()
+
