@@ -10,6 +10,9 @@ from dw_func import client_info, categories_sales, client_shops
 
 # global DataWiz
 dw = datawiz.DW()
+# date
+date_from = "2015-11-17"
+date_to = "2015-11-18"
 
 
 @csrf_exempt
@@ -43,17 +46,13 @@ def stat(request):
             pass
         return HttpResponseRedirect("/")
     try:
-
         username = request.session['username']
         password = request.session['password']
-
-
-        context = {'user': username,
+        context = {
+                   'user': username,
                    'password': password,
-                   #'dw_info': client_info(dw),
-                   #'dw_sales': categories_sales(dw),
-                   #'dw_shops': client_shops(dw),
-                   #'product': average_qty,
+                   'dw_info': client_info(dw),
+                   'dw_shops': client_shops(dw),
                   }
         return render_to_response("stat.html", context)
     except KeyError:
@@ -71,48 +70,41 @@ def get_product(request):
 
 
 def sale_stat(request):
-    turnover_list = []
-    qty_list = []
-    receipt_qty_list = []
+    turnover = pd.DataFrame(dw.get_products_sale(
+                                                by='turnover',
+                                                date_from=date_from,
+                                                date_to=date_to
+                                                ))
+    qty = pd.DataFrame(dw.get_products_sale(
+                                            by='qty',
+                                            date_from=date_from,
+                                            date_to=date_to
+                                            ))
+    receipts_qty = pd.DataFrame(dw.get_products_sale(
+                                                    by='receipts_qty',
+                                                    date_from=date_from,
+                                                    date_to=date_to
+                                                    ))
+    # average bill
     average_qty_list = []
-    difference_list = []
-
-    turnover = pd.DataFrame(dw.get_products_sale(by='turnover', date_from="2015-11-17",
-                                        date_to="2015-11-18"))
-
-    for turn_val in turnover.values:
-        turnover_list.append(turn_val.sum())
-
-
-    qty = pd.DataFrame(dw.get_products_sale(by='qty', date_from="2015-11-17",
-                                        date_to="2015-11-18"))
-
-    for qty_val in qty.values:
-        qty_list.append(qty_val.sum())
-
-
-    receipts_qty = pd.DataFrame(dw.get_products_sale(by='receipts_qty', date_from="2015-11-17",
-                                        date_to="2015-11-18"))
-
-    for rc_qty_val in receipts_qty.values:
-        receipt_qty_list.append(rc_qty_val.sum())
-
-    for turn_val, rc_qty_val in turnover_list, receipt_qty_list:
-        average_qty_list.append(turn_val / rc_qty_val)
-
-
-    contex = pd.DataFrame({
-                          "Оборот": turnover_list,
-                          "Кількість товарів": qty_list,
-                          "Кількість чеків": receipt_qty_list,
-                          "Середній чек": average_qty_list,
-                        })
-
-    for first, second in zip(range(4), range(4)):
-       difference_list.append(contex.values[1][first] - contex.values[0][second])
-
-    
-   # contex.contact({"Різниця": difference_list})
-
+    for i, j in zip(turnover.sum(axis=1).values, receipts_qty.sum(axis=1).values):
+        average_qty_list.append(i / j)
+    contex = pd.DataFrame(
+                        data=[
+                                turnover.sum(axis=1).values,
+                                qty.sum(axis=1).values,
+                                receipts_qty.sum(axis=1).values,
+                                average_qty_list],
+                        index=[
+                                "Оборот",
+                                "Кількість товарів",
+                                "Кількість чеків",
+                                "Середній чек"],
+                        columns=[
+                                "2015-11-17",
+                                "2015-11-18"]
+                        )
+    contex['Різниця в %'] = (contex[date_from] - contex[date_to]) / contex[date_from] * 100
+    contex['Різниця'] = contex[date_to] - contex[date_from]
 
     return render_to_response("sale_stat.html", {"sale_stat": contex.to_html()})
