@@ -121,7 +121,7 @@ def grow_sales(request):
     diferent = pd.Series(turnover.loc[date_to] - turnover.loc[date_from])
 
     positiv = diferent[(diferent > 0)].tolist()
-    
+
     index = pd.Series(diferent[(diferent > 0)].index).values
 
     new_index = []
@@ -134,6 +134,7 @@ def grow_sales(request):
     tmp = pd.DataFrame(name_product['product_name'])
     tmp['Different'] = positiv
 
+    tmp = tmp.sort_values(by=['Different'], axis=0, ascending=False)
 
     """ diff = pd.DataFrame(data=[
                             positiv

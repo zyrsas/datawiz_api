@@ -1,1 +1,1 @@
-{"api.datawiz.io": {"test1@mail.com": {"token_type": "Bearer", "refresh_token": "KMluXw0FfPxP2hSaVV4m0YceAgbUms", "access_token": "1KPzhl8fASNqOCONqcQyf556nSU10Z", "scope": ["read", "write"], "expires_in": 36000, "expires_at": 1493238310.029183}}}
+{"api.datawiz.io": {"test1@mail.com": {"token_type": "Bearer", "refresh_token": "b3eQIIs50yazhYzN3j754cjWjtVFhD", "access_token": "Rsi3JmCYtpLUzeoqJ93KvWeJevVV4t", "scope": ["read", "write"], "expires_in": 36000, "expires_at": 1493276842.030067}}}
