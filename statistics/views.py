@@ -6,6 +6,7 @@ from dwapi import datawiz, datawiz_auth
 import datetime
 import pandas as pd
 from dw_func import client_info, categories_sales, client_shops
+import ast
 
 
 # global DataWiz
@@ -65,7 +66,6 @@ def get_product(request):
         index = request.POST['id_products']
         prd = dw.get_product(products=int(index))
         prd = pd.DataFrame(prd, index=[0])
-
     return render_to_response("get_product.html", {'products': prd.to_html()})
 
 
@@ -108,3 +108,42 @@ def sale_stat(request):
     contex['Різниця'] = contex[date_to] - contex[date_from]
 
     return render_to_response("sale_stat.html", {"sale_stat": contex.to_html()})
+
+
+def grow_sales(request):
+    turnover = pd.DataFrame(dw.get_products_sale(
+                                                by='turnover',
+                                                date_from=date_from,
+                                                date_to=date_to,
+                                                view_type="represent"
+                                                ))
+
+    diferent = pd.Series(turnover.loc[date_to] - turnover.loc[date_from])
+
+    positiv = diferent[(diferent > 0)].tolist()
+    
+    index = pd.Series(diferent[(diferent > 0)].index).values
+
+    new_index = []
+    for i in list(index):
+        new_index.append(dw.get_product(products=int(i)))
+
+    name_product = pd.DataFrame(new_index)
+    #name_product = name_product['product_name'].str.encode("utf-8")
+
+    tmp = pd.DataFrame(name_product['product_name'])
+    tmp['Different'] = positiv
+
+
+    """ diff = pd.DataFrame(data=[
+                            positiv
+                             ],
+                        index=[
+                            "Зміна обороту"
+                        ],
+                        columns=name_product)
+
+    diff = diff.head().sort(name_product, axis=0, ascending=False)"""
+
+    return render_to_response("grow_sales.html", {'turnover': turnover.to_html(),
+                                                  'different': tmp.to_html()})

@@ -2,10 +2,6 @@ import pandas as pd
 import datetime
 
 
-date_from = "2015-11-17"
-date_to = "2015-11-18"
-
-
 def client_info(dw):
     dw_info = dw.get_client_info()
     dw_info = pd.DataFrame(dw_info)
