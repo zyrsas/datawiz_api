@@ -115,12 +115,21 @@ def grow_sales(request):
                                                 by='turnover',
                                                 date_from=date_from,
                                                 date_to=date_to,
-                                                view_type="represent"
                                                 ))
 
+
+    qty = pd.DataFrame(dw.get_products_sale(
+                                                by='qty',
+                                                date_from=date_from,
+                                                date_to=date_to,
+                                                ))
+
+
     diferent = pd.Series(turnover.loc[date_to] - turnover.loc[date_from])
+    diferent_qty = pd.Series(qty.loc[date_to] - qty.loc[date_from])
 
     positiv = diferent[(diferent > 0)].tolist()
+    positiv_qty = diferent_qty[(diferent > 0)].tolist()
 
     index = pd.Series(diferent[(diferent > 0)].index).values
 
@@ -133,8 +142,59 @@ def grow_sales(request):
 
     tmp = pd.DataFrame(name_product['product_name'])
     tmp['Different'] = positiv
+    tmp['Different_qty'] = positiv_qty
 
-    tmp = tmp.sort_values(by=['Different'], axis=0, ascending=False)
+    tmp = tmp.sort_values(by=['Different', 'Different_qty'], axis=0, ascending=[False, False])
+
+    """ diff = pd.DataFrame(data=[
+                            positiv
+                             ],
+                        index=[
+                            "Зміна обороту"
+                        ],
+                        columns=name_product)
+
+    diff = diff.head().sort(name_product, axis=0, ascending=False)"""
+
+    return render_to_response("grow_sales.html", {'turnover': turnover.to_html(),
+                                                  'different': tmp.to_html()})
+
+
+def decrease_sale(request):
+    turnover = pd.DataFrame(dw.get_products_sale(
+                                                by='turnover',
+                                                date_from=date_from,
+                                                date_to=date_to,
+                                                ))
+
+
+    qty = pd.DataFrame(dw.get_products_sale(
+                                                by='qty',
+                                                date_from=date_from,
+                                                date_to=date_to,
+                                                ))
+
+
+    diferent = pd.Series(turnover.loc[date_to] - turnover.loc[date_from])
+    diferent_qty = pd.Series(qty.loc[date_to] - qty.loc[date_from])
+
+    positiv = diferent[(diferent < 0)].tolist()
+    positiv_qty = diferent_qty[(diferent < 0)].tolist()
+
+    index = pd.Series(diferent[(diferent < 0)].index).values
+
+    new_index = []
+    for i in list(index):
+        new_index.append(dw.get_product(products=int(i)))
+
+    name_product = pd.DataFrame(new_index)
+
+
+    tmp = pd.DataFrame(name_product['product_name'])
+    tmp['Different'] = positiv
+    tmp['Different_qty'] = positiv_qty
+
+    tmp = tmp.sort_values(by=['Different', 'Different_qty'], axis=0, ascending=[True, True])
 
     """ diff = pd.DataFrame(data=[
                             positiv

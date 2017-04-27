@@ -24,4 +24,5 @@ urlpatterns = [
     url(r'^getproduct/$', views.get_product),
     url(r'^salestat/$', views.sale_stat),
     url(r'^growsales/$', views.grow_sales),
+    url(r'^decreasesales/$', views.decrease_sale)
 ]
