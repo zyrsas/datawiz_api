@@ -34,6 +34,29 @@
 
     <br>
     <div>
+        <p>Таблиця основні показники.</p>
+        {{ dw_salestat | safe }}
+    </div>
+    <br>
+
+    <br>
+    <div>
+        <p>Таблиця товари які виросли в продажах.</p>
+        {{ dw_growsales | safe }}
+    </div>
+    <br>
+
+     <br>
+    <div>
+        <p>Таблиця товари які впали в продажах.</p>
+        {{ dw_decreasesales | safe }}
+    </div>
+    <br>
+
+
+
+    <!--<br>
+    <div>
         <p>Інформація про товар: назву товару, штрих-код, код категорії, одиниці вимірювання. </p>
          <form action="/getproduct/" method='post'>
             <label for="id_products">ID Products:</label>
@@ -41,13 +64,5 @@
             <input type="submit" value="Ok" />
          </form>
     </div>
-    <br>
-
-    <div>
-
-    </div>
-
-    {{ product | safe}}
-    <br>
-    {{ id2name | safe}}
+    <br>--!>
 {% endblock %}

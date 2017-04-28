@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect
 from dwapi import datawiz, datawiz_auth
 import datetime
 import pandas as pd
-from dw_func import client_info, categories_sales, client_shops
+import dw_func
 import ast
 
 
@@ -49,11 +49,31 @@ def stat(request):
     try:
         username = request.session['username']
         password = request.session['password']
+
+        turnover = pd.DataFrame(dw.get_products_sale(
+                                                by='turnover',
+                                                date_from=date_from,
+                                                date_to=date_to
+                                                ))
+        qty = pd.DataFrame(dw.get_products_sale(
+                                            by='qty',
+                                            date_from=date_from,
+                                            date_to=date_to
+                                            ))
+        receipts_qty = pd.DataFrame(dw.get_products_sale(
+                                                    by='receipts_qty',
+                                                    date_from=date_from,
+                                                    date_to=date_to
+                                                    ))
+
         context = {
                    'user': username,
                    'password': password,
-                   'dw_info': client_info(dw),
-                   'dw_shops': client_shops(dw),
+                   'dw_info': dw_func.client_info(dw),
+                   'dw_shops': dw_func.client_shops(dw),
+                   'dw_salestat': dw_func.sale_stat(turnover, qty, receipts_qty),
+                   'dw_growsales': dw_func.grow_sales(dw, turnover, qty),
+                   'dw_decreasesales': dw_func.decrease_sale(dw, turnover, qty)
                   }
         return render_to_response("stat.html", context)
     except KeyError:
@@ -117,7 +137,6 @@ def grow_sales(request):
                                                 date_to=date_to,
                                                 ))
 
-
     qty = pd.DataFrame(dw.get_products_sale(
                                                 by='qty',
                                                 date_from=date_from,
@@ -138,23 +157,12 @@ def grow_sales(request):
         new_index.append(dw.get_product(products=int(i)))
 
     name_product = pd.DataFrame(new_index)
-    #name_product = name_product['product_name'].str.encode("utf-8")
 
     tmp = pd.DataFrame(name_product['product_name'])
     tmp['Different'] = positiv
     tmp['Different_qty'] = positiv_qty
 
     tmp = tmp.sort_values(by=['Different', 'Different_qty'], axis=0, ascending=[False, False])
-
-    """ diff = pd.DataFrame(data=[
-                            positiv
-                             ],
-                        index=[
-                            "Зміна обороту"
-                        ],
-                        columns=name_product)
-
-    diff = diff.head().sort(name_product, axis=0, ascending=False)"""
 
     return render_to_response("grow_sales.html", {'turnover': turnover.to_html(),
                                                   'different': tmp.to_html()})
@@ -196,15 +204,6 @@ def decrease_sale(request):
 
     tmp = tmp.sort_values(by=['Different', 'Different_qty'], axis=0, ascending=[True, True])
 
-    """ diff = pd.DataFrame(data=[
-                            positiv
-                             ],
-                        index=[
-                            "Зміна обороту"
-                        ],
-                        columns=name_product)
-
-    diff = diff.head().sort(name_product, axis=0, ascending=False)"""
 
     return render_to_response("grow_sales.html", {'turnover': turnover.to_html(),
                                                   'different': tmp.to_html()})
