@@ -69,16 +69,14 @@ def grow_sales(dw, turnover, qty):
     diferent = pd.Series(turnover.loc[date_to] - turnover.loc[date_from])
     diferent_qty = pd.Series(qty.loc[date_to] - qty.loc[date_from])
 
-    positiv = diferent[(diferent > 0)].tolist()
-    positiv_qty = diferent_qty[(diferent > 0)].tolist()
+    positiv = diferent[(diferent > 10)].tolist()
+    positiv_qty = diferent_qty[(diferent > 10)].tolist()
 
-    index = pd.Series(diferent[(diferent > 0)].index).values
+    index = pd.Series(diferent[(diferent > 10)].index).values
 
-    new_index = []
-    for i in list(index):
-        new_index.append(dw.get_product(products=int(i)))
+    new_index = dw.id2name(list(index), typ="product")
+    name_product = pd.DataFrame({"product_name": new_index}).reset_index()
 
-    name_product = pd.DataFrame(new_index)
 
     tmp = pd.DataFrame(name_product['product_name'])
     tmp['Different'] = positiv
@@ -93,21 +91,18 @@ def decrease_sale(dw, turnover, qty):
     diferent = pd.Series(turnover.loc[date_to] - turnover.loc[date_from])
     diferent_qty = pd.Series(qty.loc[date_to] - qty.loc[date_from])
 
-    positiv = diferent[(diferent < 0)].tolist()
-    positiv_qty = diferent_qty[(diferent < 0)].tolist()
+    negative = diferent[(diferent < -35)].tolist()
+    negative_qty = diferent_qty[(diferent < -35)].tolist()
 
-    index = pd.Series(diferent[(diferent < 0)].index).values
+    index = pd.Series(diferent[(diferent < -35)].index).values
 
-    new_index = []
-    for i in list(index):
-        new_index.append(dw.get_product(products=int(i)))
-
-    name_product = pd.DataFrame(new_index)
+    new_index = dw.id2name(list(index), typ="product")
+    name_product = pd.DataFrame({"product_name": new_index}).reset_index()
 
 
     tmp = pd.DataFrame(name_product['product_name'])
-    tmp['Different'] = positiv
-    tmp['Different_qty'] = positiv_qty
+    tmp['Different'] = negative
+    tmp['Different_qty'] = negative_qty
 
     tmp = tmp.sort_values(by=['Different', 'Different_qty'], axis=0, ascending=[True, True])
 

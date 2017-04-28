@@ -2,11 +2,10 @@
 from django.shortcuts import render_to_response
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponseRedirect
-from dwapi import datawiz, datawiz_auth
-import datetime
+from django.views.decorators.cache import cache_page
+from dwapi import datawiz
 import pandas as pd
 import dw_func
-import ast
 
 
 # global DataWiz
@@ -37,6 +36,7 @@ def login(request):
 
 
 @csrf_exempt
+@cache_page(60 * 15)
 def stat(request):
     global dw
     if request.method == "POST":
@@ -191,11 +191,11 @@ def decrease_sale(request):
 
     index = pd.Series(diferent[(diferent < 0)].index).values
 
-    new_index = []
-    for i in list(index):
-        new_index.append(dw.get_product(products=int(i)))
+    #for i in list(index):
+    #    new_index.append(dw.get_product(products=int(i)))
 
-    name_product = pd.DataFrame(new_index)
+    new_index = dw.id2name(list(index), typ="product")
+    name_product = pd.DataFrame({"product_name": new_index}).reset_index()
 
 
     tmp = pd.DataFrame(name_product['product_name'])

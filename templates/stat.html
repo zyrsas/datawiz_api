@@ -40,14 +40,12 @@
     <br>
 
     <br>
-    <div>
-        <p>Таблиця товари які виросли в продажах.</p>
+    <p>Таблиця товари які виросли в продажах.</p>
+    <div style=" table-layout:fixed; float:left; margin:0 0 0 0; width: 50px">
         {{ dw_growsales | safe }}
     </div>
-    <br>
 
-     <br>
-    <div>
+    <div style=" table-layout:fixed; float:right; margin:0 9px 0 0; width: 600px" >
         <p>Таблиця товари які впали в продажах.</p>
         {{ dw_decreasesales | safe }}
     </div>
@@ -65,4 +63,8 @@
          </form>
     </div>
     <br>--!>
+{% endblock %}
+
+{% block footer %}
+
 {% endblock %}
